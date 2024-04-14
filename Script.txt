@@ -1,0 +1,51 @@
+CREATE TABLE public.tasks
+(
+    "taskId" integer NOT NULL GENERATED ALWAYS AS IDENTITY,
+    title character varying(30) NOT NULL,
+    description character varying(50) NOT NULL,
+    "creatorLogin" character varying(30) NOT NULL,
+    "isCompleted" boolean NOT NULL DEFAULT false,
+    "expiryDate" timestamp(6) with time zone,
+    PRIMARY KEY ("taskId")
+);
+
+ALTER TABLE IF EXISTS public.tasks
+    OWNER to postgres;
+--------------------------------------------------------------------------------------------
+INSERT INTO public.tasks(
+	title, description, "creatorLogin", "isCompleted", "expiryDate")
+	VALUES 
+	('Task 1', 'To do task', 'irina', 'true', '2024-04-14 14:00:00 +03:00'),
+	('Task 2', 'To do task', 'vlad', 'true', '2024-05-14 08:00:00 +03:00'),
+	('Task 3', 'To do task', 'irina', 'true', '2024-01-14 16:00:00 +03:00');
+
+
+------------------------------------------------------------
+
+CREATE TABLE public.users
+(
+    "userLogin" character varying(30) NOT NULL,
+    "userName" character varying(30),
+    "userPassword" character varying(30) NOT NULL,
+    PRIMARY KEY ("userLogin")
+);
+
+ALTER TABLE IF EXISTS public.users
+    OWNER to postgres;
+
+---------------------------------
+
+INSERT INTO public.users(
+	"userLogin", "userName", "userPassword")
+	VALUES 
+	('irina', 'Irina', '1234'),
+	('nikita', 'Nikita', '5678'),
+	('vlad', 'Vlad', '9715');
+
+
+
+----------------------------------------------
+
+SELECT "taskId", "title", "description", "creatorLogin", "isCompleted", "expiryDate"
+from tasks JOIN users ON tasks."creatorLogin" = users."userLogin"
+where users."userLogin" = 'irina'
