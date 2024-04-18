@@ -11,14 +11,16 @@ public class UserManager {
     private static final String DATABASE_USERNAME = "postgres";
     private static final String DATABASE_PASSWORD = "00000";
 
-    public static ArrayList<User> getGroupUsers(){
+    public static ArrayList<User> getUsers(String SQLquery, String[] params){
         ArrayList<User> users = new ArrayList<>();
-        String query = "SELECT * FROM users"; //сюда скрипт получения пользователей, userGroup/GroupPassword
         try (   Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
                 DATABASE_PASSWORD);
-                PreparedStatement pst = connection.prepareStatement(query);
-                ResultSet rs = pst.executeQuery();
+                PreparedStatement pst = connection.prepareStatement(SQLquery);
              ){
+            for(int i =0; i< params.length; i++){
+                pst.setString(i+1, params[i]);
+            }
+            ResultSet rs = pst.executeQuery();
             while(rs.next()){
                 String userName = rs.getString("userName");
                 String userLogin = rs.getString("userLogin");
@@ -32,8 +34,7 @@ public class UserManager {
     }
 
     public static boolean isUserExists(User user){
-        String query = "SELECT * FROM users\n" +
-                "WHERE \"userLogin\" = ?";
+        String query = "SELECT * FROM users\n WHERE \"userLogin\" = ?";
         try (   Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
                 DATABASE_PASSWORD);
                 PreparedStatement pst = connection.prepareStatement(query);
@@ -69,8 +70,8 @@ public class UserManager {
             if (rowsAffected > 0) {
                 ResultSet generatedKeys = pst.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    int insertId = generatedKeys.getInt(1);
-                    System.out.println("Record inserted successfully with ID: " + insertId);
+                    String insertLogin = generatedKeys.getString("userLogin");
+                    System.out.println("Record inserted successfully with ID: " + insertLogin);
                 } else {
                     System.out.println("Failed to retrieve insert ID.");
                 }

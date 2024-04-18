@@ -1,7 +1,6 @@
 package Database;
 
 import Holders.*;
-import Main.UICallback;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,23 +11,26 @@ public class TaskManager {
     private static final String DATABASE_USERNAME = "postgres";
     private static final String DATABASE_PASSWORD = "00000";
 
-    public static ArrayList<Task> getUserTasks(){
+    public static ArrayList<Task> getTasks(String SQLquery, String[] params){
         ArrayList<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM tasks"; //сюда скрипт получения задач, используя userLogin/userPassword
         try (
                 Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
                         DATABASE_PASSWORD);
-                PreparedStatement pst = connection.prepareStatement(query);
-                ResultSet rs = pst.executeQuery();
+                PreparedStatement pst = connection.prepareStatement(SQLquery);
         ){
+            for(int i = 0; i< params.length; i++)
+                pst.setString(i+1, params[i]);
+            ResultSet rs = pst.executeQuery();
             while(rs.next()){
-                int taskId = rs.getInt("taskId");
-                String title = rs.getString("title");
-                String description = rs.getString("description");
-                String creatorLogin = rs.getString("creatorLogin");
-                boolean isCompleted = rs.getBoolean("isCompleted");
-                Timestamp expiryDate = rs.getTimestamp("expiryDate");
-                tasks.add(new Task(taskId, title, description, creatorLogin, isCompleted, expiryDate));
+                int userTaskId = rs.getInt("UserTaskId");
+                String creatorLogin = rs.getString("CreatorLogin");
+                int creatorGroupId = rs.getInt("CreatorGroupId");
+                String taskName = rs.getString("TaskName");
+                String taskDescription = rs.getString("TaskDescription");
+                TaskPriority taskPriority = TaskPriority.castFromInt(rs.getInt("TaskPriority"));
+                boolean taskStatus = rs.getBoolean("TaskStatus");
+                Timestamp taskExpiryDate = rs.getTimestamp("TaskExpiryDate");
+                tasks.add(new Task(userTaskId, creatorLogin, creatorGroupId, taskName, taskDescription, taskPriority, taskStatus, taskExpiryDate));
             }
             connection.close();
             return tasks;
@@ -48,10 +50,7 @@ public class TaskManager {
         )
         {
             pst.setString(1, task.getTitle());
-            pst.setString(2, task.getDescription());
-            pst.setString(3, task.getCreatorLogin());
-            pst.setBoolean(4, task.isCompleted());
-            pst.setTimestamp(5, task.getExpiryDate());
+
 
             int rowsAffected = pst.executeUpdate();
 
@@ -74,7 +73,7 @@ public class TaskManager {
     }
 
     public static void eraseTask(int taskId){
-        String query = "DELETE FROM tasks WHERE \"taskId\" = ?";
+        String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
                 DATABASE_PASSWORD);
@@ -96,14 +95,14 @@ public class TaskManager {
     }
 
     public static void eraseTask(Task task){
-        String query = "DELETE FROM tasks WHERE \"taskId\" = ?";
+        String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
                 DATABASE_PASSWORD);
               PreparedStatement pst = connection.prepareStatement(query);
         )
         {
-            pst.setInt(1, task.getTaskId());
+            pst.setInt(1, task.getUserTaskID());
             int rowsAffected = pst.executeUpdate();
 
             if (rowsAffected > 0) {

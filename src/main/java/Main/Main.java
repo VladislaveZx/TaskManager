@@ -1,41 +1,33 @@
 package Main;
 
+import Database.GroupManager;
 import Database.TaskManager;
 import Database.UserManager;
+import Holders.Group;
 import Holders.Task;
 import Holders.User;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
 
         try {
-
-            ArrayList<Task> tasks = TaskManager.getUserTasks();
+            ArrayList<Task> tasks = TaskManager.getTasks("SELECT * FROM tasks", new String[0]);
             for (Task task : tasks) {
                 System.out.println(task);
             }
 
-            ArrayList<User> users = UserManager.getGroupUsers();
+            ArrayList<User> users = UserManager.getUsers("SELECT * FROM users WHERE \"userLogin\" = ?", new String[]{"irina"});
             for (User user : users) {
                 System.out.println(user);
             }
 
-            //User user = new User("Igor", "igor");
-            //String userPas = "1256560";
-            //Database.addUser(user, userPas);
+            ArrayList<Group> groups = GroupManager.getGroups("SELECT * FROM groups", new String[0]);
+            for (Group group : groups) {
+                System.out.println(group);
+            }
 
-            Timestamp timeDate = Timestamp.valueOf("2024-09-23 10:10:10.0");
-            //for(int i = 0; i<10; i++){
-            //    Task testTask = new Task(String.format("Task %d", i), "Do smth", "vlad", false, timeDate);
-            //    TaskManager.addTask(testTask);
-            //}
-
-
-            Task testTask = new Task(20, "Task 100", "Do more", "irina", false, timeDate);
-            TaskManager.changeTask(testTask);
         }
         catch (RuntimeException e){
             UICallback.print(e);
