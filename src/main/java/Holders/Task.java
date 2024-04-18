@@ -63,7 +63,7 @@ public class Task {
         return taskPriority;
     }
 
-    public boolean isTaskStatus() {
+    public boolean getTaskStatus() {
         return taskStatus;
     }
 

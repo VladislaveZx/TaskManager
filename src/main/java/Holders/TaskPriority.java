@@ -10,6 +10,7 @@ public enum TaskPriority {
     }
 
     public static TaskPriority castFromInt(int index){
+        if(index >= TaskPriority.values().length) return LOW;
         return TaskPriority.values()[index];
     }
 

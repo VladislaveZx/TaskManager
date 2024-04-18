@@ -22,8 +22,8 @@ public class UserManager {
             }
             ResultSet rs = pst.executeQuery();
             while(rs.next()){
-                String userName = rs.getString("userName");
-                String userLogin = rs.getString("userLogin");
+                String userName = rs.getString("UserName");
+                String userLogin = rs.getString("UserLogin");
                 users.add(new User(userName, userLogin));
             }
             connection.close();

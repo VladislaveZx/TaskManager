@@ -37,5 +37,5 @@ CREATE TABLE Tasks -- Таблица задач
 	/*
 	Составной ВК - ссылается на ПК таблицы UserAndGroup, позволяя иметь доступ как к создателю задачи, так и к его группе.
 	*/
-	FOREIGN KEY (CreatorName, CreatorGroupID) REFERENCES UserAndGroup(UserName, GroupID) ON DELETE CASCADE
+	FOREIGN KEY (CreatorLogin, CreatorGroupID) REFERENCES UserAndGroup(UserName, GroupID) ON DELETE CASCADE
 );

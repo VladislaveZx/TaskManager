@@ -21,8 +21,9 @@ public class GroupManager {
                 pst.setString(i+1, params[i]);
             ResultSet rs = pst.executeQuery();
             while(rs.next()){
+                int groupId = rs.getInt("groupID");
                 String groupName = rs.getString("groupName");
-                groups.add(new Group(groupName));
+                groups.add(new Group(groupId, groupName));
             }
             connection.close();
             return groups;

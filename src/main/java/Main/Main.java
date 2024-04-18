@@ -18,16 +18,15 @@ public class Main {
                 System.out.println(task);
             }
 
-            ArrayList<User> users = UserManager.getUsers("SELECT * FROM users WHERE \"userLogin\" = ?", new String[]{"irina"});
+            ArrayList<User> users = UserManager.getUsers("SELECT * FROM users WHERE \"userlogin\" = ?", new String[]{"irina"});
             for (User user : users) {
                 System.out.println(user);
             }
 
-            ArrayList<Group> groups = GroupManager.getGroups("SELECT * FROM groups", new String[0]);
+            ArrayList<Group> groups = GroupManager.getGroups("SELECT * FROM usergroups", new String[0]);
             for (Group group : groups) {
                 System.out.println(group);
             }
-
         }
         catch (RuntimeException e){
             UICallback.print(e);
