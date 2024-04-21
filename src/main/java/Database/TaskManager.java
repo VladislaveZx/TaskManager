@@ -99,28 +99,6 @@ public class TaskManager {
         }
     }
 
-    public static void eraseTask(Task task){
-        String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
-
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
-              PreparedStatement pst = connection.prepareStatement(query);
-        )
-        {
-            pst.setInt(1, task.getUserTaskID());
-            int rowsAffected = pst.executeUpdate();
-
-            if (rowsAffected > 0) {
-                System.out.printf("Records deleted %d\n", rowsAffected);
-            } else {
-                System.out.println("No records deleted");
-            }
-            connection.close();
-        }catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static void changeTask(Task task){
         String query = "UPDATE tasks SET(\"CreatorLogin\", \"CreatorGroupId\", \"TaskName\", \"TaskDescription\"," +
                 " \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") = (?,?,?,?,?,?,?)" +
