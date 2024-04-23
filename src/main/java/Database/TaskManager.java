@@ -5,17 +5,13 @@ import Holders.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class TaskManager {
-
-    private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/TM";
-    private static final String DATABASE_USERNAME = "postgres";
-    private static final String DATABASE_PASSWORD = "00000";
+public class TaskManager extends DatabaseCore {
 
     public static ArrayList<Task> getTasks(String SQLquery, String[] params){
         ArrayList<Task> tasks = new ArrayList<>();
         try (
-                Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                        DATABASE_PASSWORD);
+                Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                        databasePassword);
                 PreparedStatement pst = connection.prepareStatement(SQLquery);
         ){
             for(int i = 0; i< params.length; i++)
@@ -43,8 +39,8 @@ public class TaskManager {
     public static void addTask(Task task){
         String query = "INSERT INTO tasks(\"CreatorLogin\", \"CreatorGroupID\", \"TaskName\"," +
                 "\"TaskDescription\", \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") VALUES (?,?,?,?,?,?,?)";
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
               PreparedStatement pst = connection.prepareStatement(query,
                       Statement.RETURN_GENERATED_KEYS)
         )
@@ -80,8 +76,8 @@ public class TaskManager {
     public static void eraseTask(int taskId){
         String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
 
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
               PreparedStatement pst = connection.prepareStatement(query);
         )
         {
@@ -104,8 +100,8 @@ public class TaskManager {
                 " \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") = (?,?,?,?,?,?,?)" +
                 " WHERE \"taskId\" = ?";
 
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
               PreparedStatement pst = connection.prepareStatement(query);
         )
         {

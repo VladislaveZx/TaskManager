@@ -4,35 +4,45 @@ import Holders.AppUser;
 
 import java.io.*;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class LoginService {
 
-    public static AppUser isAlreadyLogged(){
+    public static boolean doesInfoFilled(){
+        return !AppUser.getUserLogin().isEmpty() && !AppUser.getUserPassword().isEmpty();
+    }
+
+    public static void enterLoginData(Scanner scanner){
+        System.out.println("Enter login");
+        String userLogin = scanner.nextLine();
+        System.out.println("Enter password");
+        String password = scanner.nextLine();
+        AppUser.setUserInfo(userLogin, password);
+    }
+
+    public static void retrieveUserDataFromFile(){
         FileInputStream fis;
         Properties property = new Properties();
         try {
-            fis = new FileInputStream("config.properties");
+            fis = new FileInputStream("user.properties");
             property.load(fis);
 
             String login = property.getProperty("login");
             String password = property.getProperty("password");
 
-            System.out.println("LOGIN: " + login + ", PASSWORD: " + password);
-
-            return new AppUser(login, password);
+            AppUser.setUserInfo(login, password);
         } catch (IOException e) {
-            return null;
+            return;
         }
     }
 
-    public static AppUser loginUser(String userLogin, String userPassword){
+    public static void saveUserData(){
 
         Properties properties = new Properties();
-        try(OutputStream outputStream = new FileOutputStream("config.properties")){
-            properties.setProperty("login", userLogin);
-            properties.setProperty("password", userPassword);
+        try(OutputStream outputStream = new FileOutputStream("user.properties")){
+            properties.setProperty("login", AppUser.getUserLogin());
+            properties.setProperty("password", AppUser.getUserPassword());
             properties.store(outputStream, null);
-            return new AppUser(userLogin, userPassword);
         } catch (IOException e) {
             throw new RuntimeException();
         }

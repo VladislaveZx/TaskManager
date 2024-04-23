@@ -5,16 +5,12 @@ import Holders.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class UserManager {
-
-    private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/TM";
-    private static final String DATABASE_USERNAME = "postgres";
-    private static final String DATABASE_PASSWORD = "00000";
+public class UserManager extends DatabaseCore {
 
     public static ArrayList<User> getUsers(String SQLquery, String[] params){
         ArrayList<User> users = new ArrayList<>();
-        try (   Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        try (   Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
                 PreparedStatement pst = connection.prepareStatement(SQLquery);
              ){
             for(int i =0; i< params.length; i++){
@@ -34,9 +30,9 @@ public class UserManager {
     }
 
     public static boolean isUserExists(User user){
-        String query = "SELECT * FROM users\n WHERE \"userLogin\" = ?";
-        try (   Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        String query = "SELECT * FROM users\n WHERE users.\"userlogin\" = ?";
+        try (   Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
                 PreparedStatement pst = connection.prepareStatement(query);
                 ){
             pst.setString(1, user.getUserLogin());
@@ -54,9 +50,9 @@ public class UserManager {
             UICallback.print("User already exists");
             return;
         }
-        String query = "INSERT INTO users(\"userName\", \"userLogin\", \"userPassword\") VALUES (?,?,?)";
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        String query = "INSERT INTO users(\"username\", \"userlogin\", \"userpassword\") VALUES (?,?,?)";
+        try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
                 PreparedStatement pst = connection.prepareStatement(query,
                 Statement.RETURN_GENERATED_KEYS)
         )
@@ -70,7 +66,7 @@ public class UserManager {
             if (rowsAffected > 0) {
                 ResultSet generatedKeys = pst.getGeneratedKeys();
                 if (generatedKeys.next()) {
-                    String insertLogin = generatedKeys.getString("userLogin");
+                    String insertLogin = generatedKeys.getString("userlogin");
                     System.out.println("Record inserted successfully with ID: " + insertLogin);
                 } else {
                     System.out.println("Failed to retrieve insert ID.");
@@ -89,8 +85,8 @@ public class UserManager {
         if(!isUserExists(user)) throw new RuntimeException("User doesn't exist");
         String query = "DELETE FROM users WHERE \"userLogin\" = ?";
 
-        try ( Connection connection = DriverManager.getConnection(DATABASE_URL, DATABASE_USERNAME,
-                DATABASE_PASSWORD);
+        try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
+                databasePassword);
               PreparedStatement pst = connection.prepareStatement(query)
         )
         {

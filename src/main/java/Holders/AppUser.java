@@ -1,11 +1,20 @@
 package Holders;
 
 public class AppUser {
-    private String userLogin;
-    private String userPassword;
+    private static String userLogin = "";
+    private static String userPassword = "";
 
-    public AppUser(String userLogin, String userPassword) {
-        this.userLogin = userLogin;
-        this.userPassword = userPassword;
+    public static String getUserLogin() {
+        return userLogin;
     }
+
+    public static String getUserPassword() {
+        return userPassword;
+    }
+
+    public static void setUserInfo(String userLogin, String userPassword) {
+        AppUser.userLogin = userLogin;
+        AppUser.userPassword = userPassword;
+    }
+
 }
