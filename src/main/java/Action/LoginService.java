@@ -1,4 +1,4 @@
-package Main;
+package Action;
 
 import Holders.AppUser;
 
@@ -20,7 +20,7 @@ public class LoginService {
         AppUser.setUserInfo(userLogin, password);
     }
 
-    public static void retrieveUserDataFromFile(){
+    public static boolean retrieveUserDataFromFile(){
         FileInputStream fis;
         Properties property = new Properties();
         try {
@@ -31,8 +31,9 @@ public class LoginService {
             String password = property.getProperty("password");
 
             AppUser.setUserInfo(login, password);
+            return true;
         } catch (IOException e) {
-            return;
+            return false;
         }
     }
 

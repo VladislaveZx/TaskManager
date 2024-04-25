@@ -1,19 +1,18 @@
 package Database;
 
-import Holders.AppUser;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class DatabaseCore {
 
-    protected static String databaseURL;// = "jdbc:postgresql://localhost:5432/TM";
-    protected static String databaseUsername;// = "postgres";
-    protected static String databasePassword;// = "00000";
+    protected static String databaseURL;
+    protected static String databaseUsername;
+    protected static String databasePassword;
 
-    public static void loadDatabaseInfo(){
+    public static void loadDatabaseInfo(Scanner scanner){
         FileInputStream fis;
         Properties property = new Properties();
         try {
@@ -25,7 +24,12 @@ public class DatabaseCore {
             databasePassword = property.getProperty("DB_PASSWORD");
 
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load DB data");
+            System.out.println(e.getMessage() + "\nEnter Database URL");
+            databaseURL = scanner.nextLine();
+            System.out.println("Enter Database Login");
+            databaseUsername = scanner.nextLine();
+            System.out.println("Enter Database Password");
+            databasePassword = scanner.nextLine();
         }
     }
 
