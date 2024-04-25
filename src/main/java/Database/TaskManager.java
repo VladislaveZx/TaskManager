@@ -73,7 +73,7 @@ public class TaskManager extends DatabaseCore {
         }
     }
 
-    public static void eraseTask(int taskId){
+    public static void eraseTask(Task task){
         String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
@@ -81,7 +81,7 @@ public class TaskManager extends DatabaseCore {
               PreparedStatement pst = connection.prepareStatement(query);
         )
         {
-            pst.setInt(1, taskId);
+            pst.setInt(1, task.getUserTaskID());
             int rowsAffected = pst.executeUpdate();
 
             if (rowsAffected > 0) {

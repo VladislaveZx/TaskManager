@@ -13,16 +13,14 @@ import java.util.Scanner;
 public class Functional {
     public static void showUserTasks() {
         System.out.println("Tasks:");
-        String getTasks = "SELECT * FROM tasks";//выбарать задачи пользователя
-        ArrayList<Task> tasks = TaskManager.getTasks(getTasks, new String[0]);
+        ArrayList<Task> tasks = TaskManager.getTasks(SQLQuery.GET_TASK_OF_USER.toString(), new String[0]);
         for (Task task : tasks)
             System.out.println(task);
     }
 
     public static void showUsersFromAppUserGroup(){
         System.out.println("Users:");
-        String getUsers = "SELECT * FROM users"; //выбарать пользователей группы
-        ArrayList<User> users = UserManager.getUsers(getUsers, new String[0]);
+        ArrayList<User> users = UserManager.getUsers(SQLQuery.GET_USERS_OF_GROUP.toString(), new String[0]);
         for (User user : users)
             System.out.println(user);
     }

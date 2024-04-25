@@ -12,6 +12,7 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
         DatabaseCore.loadDatabaseInfo(scanner);
 
@@ -45,7 +46,7 @@ public class Main {
                     "2 - get users from my group\n" +
                     "3 - actions with tasks\n" +
                     "4 - change user\n" +
-                    "5 - exit");
+                    "6 - exit program");
 
             boolean shouldClose = false;
             while(!shouldClose) {
@@ -60,13 +61,20 @@ public class Main {
                         break;
 
                     case 3:
-                        // not finished
-                        System.out.println("Actions:\n1 - Add task\n2 - Delete task\n3 - Change task");
+                        // placeholder
+                        System.out.println("Actions:\n" +
+                                "1 - Add task\n" +
+                                "2 - Delete task\n" +
+                                "3 - Change task");
+                            System.out.println("Enter action:");
+                            switch (scanner.nextInt()) {
+                                default: break;
+                            }
                         break;
                     case 4:
                         Functional.reloginUser(scanner);
                         break;
-                    case 5:
+                    case 6:
                         shouldClose = true;
                         System.out.println("Exited");
                         break;

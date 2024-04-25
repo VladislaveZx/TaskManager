@@ -38,7 +38,6 @@ public class LoginService {
     }
 
     public static void saveUserData(){
-
         Properties properties = new Properties();
         try(OutputStream outputStream = new FileOutputStream("user.properties")){
             properties.setProperty("login", AppUser.getUserLogin());
