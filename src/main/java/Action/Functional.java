@@ -6,15 +6,19 @@ import Database.UserManager;
 import Holders.AppUser;
 import Holders.Task;
 import Holders.User;
+import Main.Input;
 
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Functional {
 
     public static void showUserTasks() {
-        System.out.println("Tasks:");
         ArrayList<Task> tasks = TaskManager.getTasks(SQLQuery.GET_TASK_OF_USER.toString(), new String[0]);
+        if(tasks.isEmpty()) {
+            System.out.println("No tasks found");
+            return;
+        }
+        System.out.println("Tasks:");
         for (Task task : tasks)
             System.out.println(task);
     }
@@ -26,10 +30,16 @@ public class Functional {
             System.out.println(user);
     }
 
-    public static void reloginUser(Scanner scanner){
-        while(!DatabaseCore.doesSingleExist(SQLQuery.LOGIN_USER.toString(), new String[]{AppUser.getUserLogin(), AppUser.getUserPassword()})){
+    public static void reloginUser(){
+        System.out.println("Changing user");
+        AppUser.setIsUserLogged(false);
+
+        while(!AppUser.getIsUserLogged())
+        {
             System.out.println("Log in:");
+            Input.skipLine();
             LoginService.loginUser();
+            AppUser.setIsUserLogged(LoginService.accountFound());
         }
         LoginService.saveUserData();
         System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());

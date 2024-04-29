@@ -1,5 +1,6 @@
 package Main;
 
+import Action.Functional;
 import Action.LoginService;
 import Action.SQLQuery;
 import Database.DatabaseCore;
@@ -55,34 +56,22 @@ public class Main {
                     "6 - exit program");
 
             boolean shouldClose = false;
-            UserActions actions = UserActions.UNDEFINED;
             while(!shouldClose) {
                 System.out.println("Enter command code:");
-                actions = UserActions.values()[Input.getInt()];
-                switch (actions){
+                switch (UserActions.getActionFromInt(Input.getInt())){
                     case GET_USER_TASKS:
-                        ArrayList<Task> tasks = TaskManager.getTasks(SQLQuery.GET_TASK_OF_USER.toString(), new String[0]);
-                        for(Task task : tasks){
-                            System.out.println(task);
-                        }
-                    break;
+                        Functional.showUserTasks();
+                        break;
+                    case GET_GROUP_USERS:
+                        Functional.showUsersFromAppUserGroup();
+                        break;
                     case CHANGE_USER:
-                        System.out.println("Changing user");
-                        AppUser.setIsUserLogged(false);
-
-                        while(!AppUser.getIsUserLogged())
-                        {
-                            System.out.println("Log in:");
-                            Input.skipLine();
-                            LoginService.loginUser();
-                            AppUser.setIsUserLogged(LoginService.accountFound());
-                        }
-                        LoginService.saveUserData();
-                        System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
+                        Functional.reloginUser();
                         break;
                     case CLOSE_PROGRAM:
                         shouldClose = true;
                         break;
+                    case UNDEFINED:
                     default:
                         System.out.println("No such command");
                         break;
