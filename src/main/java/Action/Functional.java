@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Functional {
+
     public static void showUserTasks() {
         System.out.println("Tasks:");
         ArrayList<Task> tasks = TaskManager.getTasks(SQLQuery.GET_TASK_OF_USER.toString(), new String[0]);
@@ -26,12 +27,9 @@ public class Functional {
     }
 
     public static void reloginUser(Scanner scanner){
-        boolean isDataFirstEntered = false;
-        while(!isDataFirstEntered || !DatabaseCore.doesSingleExist(SQLQuery.LOGIN_USER.toString(), new String[]{AppUser.getUserLogin(), AppUser.getUserPassword()})){
-            System.out.println(isDataFirstEntered?"Try again":"Log in:");
-            if(!isDataFirstEntered) scanner.nextLine();
-            LoginService.enterLoginData(scanner);
-            isDataFirstEntered = true;
+        while(!DatabaseCore.doesSingleExist(SQLQuery.LOGIN_USER.toString(), new String[]{AppUser.getUserLogin(), AppUser.getUserPassword()})){
+            System.out.println("Log in:");
+            LoginService.loginUser();
         }
         LoginService.saveUserData();
         System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());

@@ -1,40 +1,45 @@
 package Main;
 
-import Action.SQLQuery;
-import Action.Functional;
 import Action.LoginService;
+import Action.SQLQuery;
 import Database.DatabaseCore;
+import Database.TaskManager;
 import Database.UserManager;
 import Holders.AppUser;
+import Holders.Task;
 import Holders.User;
 
-import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        DatabaseCore.loadDatabaseInfo(scanner);
+        DatabaseCore.loadDatabaseInfo();
 
         try {
             System.out.println("Create new user: Y/N");
-            String newUserAsk = scanner.nextLine();
-            if(newUserAsk.equalsIgnoreCase("y")) {
-                System.out.println("Create new user");
-                LoginService.enterLoginData(scanner);
-                System.out.println("Enter user name:");
-                String userName = scanner.nextLine();
+            if(Input.getString().equalsIgnoreCase("y")) {
+                while(!AppUser.getIsUserLogged()) {
+                    System.out.println("Create new user");
+                    LoginService.loginUser();
+                    System.out.println("Enter name");
+                    String userName = Input.getString();
 
-                User newUser = new User(userName, AppUser.getUserLogin());
-                UserManager.addUser(newUser, AppUser.getUserPassword());
+                    User newUser = new User(userName, AppUser.getUserLogin());
+                    boolean result = UserManager.addUser(newUser, AppUser.getUserPassword());
+                    AppUser.setIsUserLogged(result);
+                    if(!result) System.out.println("Account is busy or something went wrong\nTry again");
+                }
             }
             else LoginService.retrieveUserDataFromFile();
 
-            while(!LoginService.doesInfoFilled() ||
-                    !DatabaseCore.doesSingleExist(SQLQuery.LOGIN_USER.toString(), new String[]{AppUser.getUserLogin(), AppUser.getUserPassword()}))
+            if(LoginService.accountFound()) AppUser.setIsUserLogged(true);
+
+            while(!AppUser.getIsUserLogged())
             {
-                System.out.println("Log in failed");
-                LoginService.enterLoginData(scanner);
+                System.out.println("Log in:");
+                LoginService.loginUser();
+                AppUser.setIsUserLogged(LoginService.accountFound());
             }
 
             LoginService.saveUserData();
@@ -42,44 +47,44 @@ public class Main {
             System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
 
             System.out.println("Commands:\n" +
-                    "1 - get tasks of mine\n" +
+                    "1 - my tasks\n" +
                     "2 - get users from my group\n" +
                     "3 - actions with tasks\n" +
                     "4 - change user\n" +
+                    "5 - action with users withing group\n" +
                     "6 - exit program");
 
             boolean shouldClose = false;
+            UserActions actions = UserActions.UNDEFINED;
             while(!shouldClose) {
-                System.out.println("Enter command:");
-                int code = scanner.nextInt();
-                switch (code) {
-                    case 1:
-                        Functional.showUserTasks();
-                        break;
-                    case 2:
-                        Functional.showUsersFromAppUserGroup();
-                        break;
+                System.out.println("Enter command code:");
+                actions = UserActions.values()[Input.getInt()];
+                switch (actions){
+                    case GET_USER_TASKS:
+                        ArrayList<Task> tasks = TaskManager.getTasks(SQLQuery.GET_TASK_OF_USER.toString(), new String[0]);
+                        for(Task task : tasks){
+                            System.out.println(task);
+                        }
+                    break;
+                    case CHANGE_USER:
+                        System.out.println("Changing user");
+                        AppUser.setIsUserLogged(false);
 
-                    case 3:
-                        // placeholder
-                        System.out.println("Actions:\n" +
-                                "1 - Add task\n" +
-                                "2 - Delete task\n" +
-                                "3 - Change task");
-                            System.out.println("Enter action:");
-                            switch (scanner.nextInt()) {
-                                default: break;
-                            }
+                        while(!AppUser.getIsUserLogged())
+                        {
+                            System.out.println("Log in:");
+                            Input.skipLine();
+                            LoginService.loginUser();
+                            AppUser.setIsUserLogged(LoginService.accountFound());
+                        }
+                        LoginService.saveUserData();
+                        System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
                         break;
-                    case 4:
-                        Functional.reloginUser(scanner);
-                        break;
-                    case 6:
+                    case CLOSE_PROGRAM:
                         shouldClose = true;
-                        System.out.println("Exited");
                         break;
                     default:
-                        System.out.print("Doesn't exist");
+                        System.out.println("No such command");
                         break;
                 }
             }

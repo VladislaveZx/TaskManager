@@ -1,51 +1,52 @@
 package Action;
 
+import Database.DatabaseCore;
 import Holders.AppUser;
+import Main.Input;
 
 import java.io.*;
 import java.util.Properties;
-import java.util.Scanner;
 
 public class LoginService {
 
-    public static boolean doesInfoFilled(){
-        return !AppUser.getUserLogin().isEmpty() && !AppUser.getUserPassword().isEmpty();
-    }
-
-    public static void enterLoginData(Scanner scanner){
+    public static void loginUser() {
         System.out.println("Enter login");
-        String userLogin = scanner.nextLine();
+        String userLogin = Input.getString();
         System.out.println("Enter password");
-        String password = scanner.nextLine();
+        String password = Input.getString();
         AppUser.setUserInfo(userLogin, password);
     }
 
-    public static boolean retrieveUserDataFromFile(){
+    public static void retrieveUserDataFromFile(){
         FileInputStream fis;
         Properties property = new Properties();
         try {
-            fis = new FileInputStream("user.properties");
+            fis = new FileInputStream("userData.properties");
             property.load(fis);
 
             String login = property.getProperty("login");
             String password = property.getProperty("password");
 
             AppUser.setUserInfo(login, password);
-            return true;
         } catch (IOException e) {
-            return false;
+            AppUser.setIsUserLogged(false);
         }
     }
 
     public static void saveUserData(){
         Properties properties = new Properties();
-        try(OutputStream outputStream = new FileOutputStream("user.properties")){
+        try(OutputStream outputStream = new FileOutputStream("userData.properties")){
             properties.setProperty("login", AppUser.getUserLogin());
             properties.setProperty("password", AppUser.getUserPassword());
             properties.store(outputStream, null);
         } catch (IOException e) {
             throw new RuntimeException();
         }
+    }
+
+    static public boolean accountFound(){
+            return DatabaseCore.doesSingleExist(SQLQuery.LOGIN_USER.toString(),
+                new String[]{AppUser.getUserLogin(), AppUser.getUserPassword()});
     }
 
 }

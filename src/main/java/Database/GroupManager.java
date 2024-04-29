@@ -12,7 +12,7 @@ public class GroupManager extends DatabaseCore {
         try (
                 Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                         databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery);
+                PreparedStatement pst = connection.prepareStatement(SQLquery)
         ){
             for(int i = 0; i< params.length; i++)
                 pst.setString(i+1, params[i]);

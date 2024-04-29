@@ -12,7 +12,7 @@ public class TaskManager extends DatabaseCore {
         try (
                 Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                         databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery);
+                PreparedStatement pst = connection.prepareStatement(SQLquery)
         ){
             for(int i = 0; i< params.length; i++)
                 pst.setString(i+1, params[i]);
@@ -36,7 +36,7 @@ public class TaskManager extends DatabaseCore {
     }
 
 
-    public static void addTask(Task task){
+    public static boolean addTask(Task task){
         String query = "INSERT INTO tasks(\"CreatorLogin\", \"CreatorGroupID\", \"TaskName\"," +
                 "\"TaskDescription\", \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") VALUES (?,?,?,?,?,?,?)";
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
@@ -55,54 +55,37 @@ public class TaskManager extends DatabaseCore {
 
             int rowsAffected = pst.executeUpdate();
 
-            if (rowsAffected > 0) {
-                ResultSet generatedKeys = pst.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int insertId = generatedKeys.getInt(1);
-                    System.out.println("Record inserted successfully with ID: " + insertId);
-                } else {
-                    System.out.println("Failed to retrieve insert ID.");
-                }
-            } else {
-                System.out.println("No records inserted.");
-            }
-            connection.close();
-            return;
+            return rowsAffected > 0;
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void eraseTask(Task task){
+    public static boolean eraseTask(Task task){
         String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-              PreparedStatement pst = connection.prepareStatement(query);
+              PreparedStatement pst = connection.prepareStatement(query)
         )
         {
             pst.setInt(1, task.getUserTaskID());
             int rowsAffected = pst.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.printf("Records deleted %d\n", rowsAffected);
-            } else {
-                System.out.println("No records deleted");
-            }
-            connection.close();
+            return rowsAffected > 0;
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void changeTask(Task task){
+    public static boolean changeTask(Task task){
         String query = "UPDATE tasks SET(\"CreatorLogin\", \"CreatorGroupId\", \"TaskName\", \"TaskDescription\"," +
                 " \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") = (?,?,?,?,?,?,?)" +
                 " WHERE \"taskId\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-              PreparedStatement pst = connection.prepareStatement(query);
+              PreparedStatement pst = connection.prepareStatement(query)
         )
         {
             pst.setString(1, task.getCreatorLogin());
@@ -115,12 +98,7 @@ public class TaskManager extends DatabaseCore {
             pst.setInt(8, task.getUserTaskID());
             int rowsAffected = pst.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.printf("Records updated %d\n", rowsAffected);
-            } else {
-                System.out.println("No records updated");
-            }
-            connection.close();
+            return rowsAffected > 0;
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }

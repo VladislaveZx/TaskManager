@@ -1,5 +1,4 @@
 package Database;
-import Main.UICallback;
 import Holders.*;
 
 import java.sql.*;
@@ -11,7 +10,7 @@ public class UserManager extends DatabaseCore {
         ArrayList<User> users = new ArrayList<>();
         try (   Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery);
+                PreparedStatement pst = connection.prepareStatement(SQLquery)
              ){
             for(int i =0; i< params.length; i++){
                 pst.setString(i+1, params[i]);
@@ -29,13 +28,13 @@ public class UserManager extends DatabaseCore {
         }
     }
 
-    public static boolean isUserExists(User user){
+    public static boolean doesUserExists(String userLogin){
         String query = "SELECT * FROM users\n WHERE users.\"userlogin\" = ?";
         try (   Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-                PreparedStatement pst = connection.prepareStatement(query);
+                PreparedStatement pst = connection.prepareStatement(query)
                 ){
-            pst.setString(1, user.getUserLogin());
+            pst.setString(1, userLogin);
             ResultSet rs = pst.executeQuery();
             rs.next();
             connection.close();
@@ -45,10 +44,9 @@ public class UserManager extends DatabaseCore {
         }
     }
 
-    public static void addUser(User user, String userPassword){
-        if(isUserExists(user)) {
-            UICallback.print("User already exists");
-            return;
+    public static boolean addUser(User user, String userPassword){
+        if(doesUserExists(user.getUserLogin())) {
+            return false;
         }
         String query = "INSERT INTO users(\"username\", \"userlogin\", \"userpassword\") VALUES (?,?,?)";
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
@@ -63,42 +61,25 @@ public class UserManager extends DatabaseCore {
 
             int rowsAffected = pst.executeUpdate();
 
-            if (rowsAffected > 0) {
-                ResultSet generatedKeys = pst.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    String insertLogin = generatedKeys.getString("userlogin");
-                    System.out.println("Record inserted successfully with ID: " + insertLogin);
-                } else {
-                    System.out.println("Failed to retrieve insert ID.");
-                }
-            } else {
-                System.out.println("No records inserted.");
-            }
-            connection.close();
-            return;
+            return rowsAffected > 0;
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static void eraseUser(User user){
-        if(!isUserExists(user)) throw new RuntimeException("User doesn't exist");
-        String query = "DELETE FROM users WHERE \"userLogin\" = ?";
+    public static boolean eraseUser(String userLogin){
+        if(!doesUserExists(userLogin)) return false;
+        String query = "DELETE FROM users WHERE users.\"userlogin\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
               PreparedStatement pst = connection.prepareStatement(query)
         )
         {
-            pst.setString(1, user.getUserLogin());
+            pst.setString(1, userLogin);
             int rowsAffected = pst.executeUpdate();
 
-            if (rowsAffected > 0) {
-                System.out.printf("Records deleted %d\n", rowsAffected);
-            } else {
-                System.out.println("No records deleted.");
-            }
-            connection.close();
+            return rowsAffected > 0;
         }catch (SQLException e) {
             throw new RuntimeException(e);
         }

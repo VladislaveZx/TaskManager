@@ -12,7 +12,7 @@ public class DatabaseCore {
     protected static String databaseUsername;
     protected static String databasePassword;
 
-    public static void loadDatabaseInfo(Scanner scanner){
+    public static void loadDatabaseInfo(){
         FileInputStream fis;
         Properties property = new Properties();
         try {
@@ -24,12 +24,7 @@ public class DatabaseCore {
             databasePassword = property.getProperty("DB_PASSWORD");
 
         } catch (IOException e) {
-            System.out.println(e.getMessage() + "\nEnter Database URL");
-            databaseURL = scanner.nextLine();
-            System.out.println("Enter Database Login");
-            databaseUsername = scanner.nextLine();
-            System.out.println("Enter Database Password");
-            databasePassword = scanner.nextLine();
+           throw new RuntimeException("Database login data is missing");
         }
     }
 
@@ -37,7 +32,7 @@ public class DatabaseCore {
         try (
                 Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                         databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery);
+                PreparedStatement pst = connection.prepareStatement(SQLquery)
         ){
             for(int i = 0; i< params.length; i++)
                 pst.setString(i+1, params[i]);
@@ -45,7 +40,7 @@ public class DatabaseCore {
             int rows = 0;
             while(rs.next()){
                 rows+=1;
-            };
+            }
             connection.close();
             return rows>0;
         } catch (SQLException e) {
@@ -57,7 +52,7 @@ public class DatabaseCore {
         try (
                 Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                         databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery);
+                PreparedStatement pst = connection.prepareStatement(SQLquery)
         ){
             for(int i = 0; i< params.length; i++)
                 pst.setString(i+1, params[i]);
