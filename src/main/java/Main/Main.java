@@ -2,15 +2,11 @@ package Main;
 
 import Action.Functional;
 import Action.LoginService;
-import Action.SQLQuery;
 import Database.DatabaseCore;
-import Database.TaskManager;
-import Database.UserManager;
 import Holders.AppUser;
-import Holders.Task;
-import Holders.User;
-
-import java.util.ArrayList;
+import Tools.Input;
+import Tools.UICallback;
+import Tools.UserActions;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,20 +15,10 @@ public class Main {
 
         try {
             System.out.println("Create new user: Y/N");
-            if(Input.getString().equalsIgnoreCase("y")) {
-                while(!AppUser.getIsUserLogged()) {
-                    System.out.println("Create new user");
-                    LoginService.loginUser();
-                    System.out.println("Enter name");
-                    String userName = Input.getString();
-
-                    User newUser = new User(userName, AppUser.getUserLogin());
-                    boolean result = UserManager.addUser(newUser, AppUser.getUserPassword());
-                    AppUser.setIsUserLogged(result);
-                    if(!result) System.out.println("Account is busy or something went wrong\nTry again");
-                }
-            }
-            else LoginService.retrieveUserDataFromFile();
+            if(Input.getString().equalsIgnoreCase("y"))
+                Functional.createNewUser();
+            else
+                LoginService.retrieveUserDataFromFile();
 
             if(LoginService.accountFound()) AppUser.setIsUserLogged(true);
 

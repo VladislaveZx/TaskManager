@@ -2,7 +2,7 @@ package Action;
 
 import Database.DatabaseCore;
 import Holders.AppUser;
-import Main.Input;
+import Tools.Input;
 
 import java.io.*;
 import java.util.Properties;

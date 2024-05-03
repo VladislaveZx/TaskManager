@@ -1,4 +1,5 @@
 package Database;
+import Action.SQLQuery;
 import Holders.*;
 
 import java.sql.*;
@@ -29,19 +30,7 @@ public class UserManager extends DatabaseCore {
     }
 
     public static boolean doesUserExists(String userLogin){
-        String query = "SELECT * FROM users\n WHERE users.\"userlogin\" = ?";
-        try (   Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
-                databasePassword);
-                PreparedStatement pst = connection.prepareStatement(query)
-                ){
-            pst.setString(1, userLogin);
-            ResultSet rs = pst.executeQuery();
-            rs.next();
-            connection.close();
-            return rs.isLast();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return doesSingleExist(SQLQuery.CHECK_IF_USER_EXISTS.toString(), new String[]{userLogin});
     }
 
     public static boolean addUser(User user, String userPassword){

@@ -27,26 +27,6 @@ public class DatabaseCore {
         }
     }
 
-    public static boolean doesAnyExist(String SQLquery, String[] params){
-        try (
-                Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
-                        databasePassword);
-                PreparedStatement pst = connection.prepareStatement(SQLquery)
-        ){
-            for(int i = 0; i< params.length; i++)
-                pst.setString(i+1, params[i]);
-            ResultSet rs = pst.executeQuery();
-            int rows = 0;
-            while(rs.next()){
-                rows+=1;
-            }
-            connection.close();
-            return rows>0;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     public static boolean doesSingleExist(String SQLquery, String[] params){
         try (
                 Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
