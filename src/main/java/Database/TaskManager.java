@@ -1,5 +1,6 @@
 package Database;
 
+import Action.SQLQuery;
 import Holders.*;
 
 import java.sql.*;
@@ -62,11 +63,9 @@ public class TaskManager extends DatabaseCore {
     }
 
     public static boolean eraseTask(Task task){
-        String query = "DELETE FROM tasks WHERE \"UserTaskId\" = ?";
-
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-              PreparedStatement pst = connection.prepareStatement(query)
+              PreparedStatement pst = connection.prepareStatement(SQLQuery.DELETE_TASK_BY_ID.toString())
         )
         {
             pst.setInt(1, task.getUserTaskID());
@@ -79,13 +78,11 @@ public class TaskManager extends DatabaseCore {
     }
 
     public static boolean changeTask(Task task){
-        String query = "UPDATE tasks SET(\"CreatorLogin\", \"CreatorGroupId\", \"TaskName\", \"TaskDescription\"," +
-                " \"TaskPriority\", \"TaskStatus\", \"TaskExpiryDate\") = (?,?,?,?,?,?,?)" +
-                " WHERE \"taskId\" = ?";
+        String query = "";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-              PreparedStatement pst = connection.prepareStatement(query)
+              PreparedStatement pst = connection.prepareStatement(SQLQuery.UPDATE_TASK.toString())
         )
         {
             pst.setString(1, task.getCreatorLogin());

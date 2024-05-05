@@ -37,10 +37,9 @@ public class UserManager extends DatabaseCore {
         if(doesUserExists(user.getUserLogin())) {
             return false;
         }
-        String query = "INSERT INTO users(\"username\", \"userlogin\", \"userpassword\") VALUES (?,?,?)";
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-                PreparedStatement pst = connection.prepareStatement(query,
+                PreparedStatement pst = connection.prepareStatement(SQLQuery.CREATE_USER.toString(),
                 Statement.RETURN_GENERATED_KEYS)
         )
         {
@@ -58,11 +57,10 @@ public class UserManager extends DatabaseCore {
 
     public static boolean eraseUser(String userLogin){
         if(!doesUserExists(userLogin)) return false;
-        String query = "DELETE FROM users WHERE users.\"userlogin\" = ?";
 
         try ( Connection connection = DriverManager.getConnection(databaseURL, databaseUsername,
                 databasePassword);
-              PreparedStatement pst = connection.prepareStatement(query)
+              PreparedStatement pst = connection.prepareStatement(SQLQuery.DELETE_USER.toString())
         )
         {
             pst.setString(1, userLogin);

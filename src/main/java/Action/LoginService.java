@@ -17,7 +17,7 @@ public class LoginService {
         AppUser.setUserInfo(userLogin, password);
     }
 
-    public static void retrieveUserDataFromFile(){
+    public static void tryRetrieveUserDataFromFile(){
         FileInputStream fis;
         Properties property = new Properties();
         try {

@@ -49,19 +49,4 @@ public class Functional {
         for (User user : users)
             System.out.println(user);
     }
-
-    public static void reloginUser(){
-        System.out.println("Changing user");
-        AppUser.setIsUserLogged(false);
-
-        while(!AppUser.getIsUserLogged())
-        {
-            System.out.println("Log in:");
-            Input.skipLine();
-            LoginService.loginUser();
-            AppUser.setIsUserLogged(LoginService.accountFound());
-        }
-        LoginService.saveUserData();
-        System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
-    }
 }

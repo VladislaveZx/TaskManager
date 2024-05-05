@@ -17,10 +17,12 @@ public class Main {
             System.out.println("Create new user: Y/N");
             if(Input.getString().equalsIgnoreCase("y"))
                 Functional.createNewUser();
-            else
-                LoginService.retrieveUserDataFromFile();
 
-            if(LoginService.accountFound()) AppUser.setIsUserLogged(true);
+            System.out.println("Use exiting data as login: Y/N");
+            if(Input.getString().equalsIgnoreCase("y")) {
+                LoginService.tryRetrieveUserDataFromFile();
+                AppUser.setIsUserLogged(LoginService.accountFound());
+            }
 
             while(!AppUser.getIsUserLogged())
             {
@@ -33,13 +35,13 @@ public class Main {
 
             System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
 
-            System.out.println("Commands:\n" +
-                    "1 - my tasks\n" +
-                    "2 - get users from my group\n" +
-                    "3 - actions with tasks\n" +
-                    "4 - change user\n" +
-                    "5 - action with users withing group\n" +
-                    "6 - exit program");
+            System.out.println("""
+                    Commands:
+                    1 - my tasks
+                    2 - get users from my group
+                    3 - actions with tasks
+                    4 - action with users within group
+                    5 - exit program""");
 
             boolean shouldClose = false;
             while(!shouldClose) {
@@ -51,8 +53,17 @@ public class Main {
                     case GET_GROUP_USERS:
                         Functional.showUsersFromAppUserGroup();
                         break;
-                    case CHANGE_USER:
-                        Functional.reloginUser();
+                    case TASK_ACTIONS:
+                        System.out.println("Task actions:\n" +
+                                "1 - Add task\n" +
+                                "2 - Change task\n" +
+                                "3 - Delete task");
+                        break;
+                    case GROUP_ACTIONS:
+                        System.out.println("Group actions:\n" +
+                                "1 - Add user to my group\n" +
+                                "2 - Delete user from my group\n"+
+                                "3 - Leave group");
                         break;
                     case CLOSE_PROGRAM:
                         shouldClose = true;
