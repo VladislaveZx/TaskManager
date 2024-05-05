@@ -1,41 +1,79 @@
 package Main;
 
-import Database.TaskManager;
-import Database.UserManager;
-import Holders.Task;
-import Holders.User;
-
-import java.sql.Timestamp;
-import java.util.ArrayList;
+import Action.Functional;
+import Action.LoginService;
+import Database.DatabaseCore;
+import Holders.AppUser;
+import Tools.Input;
+import Tools.UICallback;
+import Tools.UserActions;
 
 public class Main {
     public static void main(String[] args) {
 
+        DatabaseCore.loadDatabaseInfo();
+
         try {
+            System.out.println("Create new user: Y/N");
+            if(Input.getString().equalsIgnoreCase("y"))
+                Functional.createNewUser();
 
-            ArrayList<Task> tasks = TaskManager.getUserTasks();
-            for (Task task : tasks) {
-                System.out.println(task);
+            System.out.println("Use exiting data as login: Y/N");
+            if(Input.getString().equalsIgnoreCase("y")) {
+                LoginService.tryRetrieveUserDataFromFile();
+                AppUser.setIsUserLogged(LoginService.accountFound());
             }
 
-            ArrayList<User> users = UserManager.getGroupUsers();
-            for (User user : users) {
-                System.out.println(user);
+            while(!AppUser.getIsUserLogged())
+            {
+                System.out.println("Log in:");
+                LoginService.loginUser();
+                AppUser.setIsUserLogged(LoginService.accountFound());
             }
 
-            //User user = new User("Igor", "igor");
-            //String userPas = "1256560";
-            //Database.addUser(user, userPas);
+            LoginService.saveUserData();
 
-            Timestamp timeDate = Timestamp.valueOf("2024-09-23 10:10:10.0");
-            //for(int i = 0; i<10; i++){
-            //    Task testTask = new Task(String.format("Task %d", i), "Do smth", "vlad", false, timeDate);
-            //    TaskManager.addTask(testTask);
-            //}
+            System.out.println("LOGGED UNDER: " + AppUser.getUserLogin());
 
+            System.out.println("""
+                    Commands:
+                    1 - my tasks
+                    2 - get users from my group
+                    3 - actions with tasks
+                    4 - action with users within group
+                    5 - exit program""");
 
-            Task testTask = new Task(20, "Task 100", "Do more", "irina", false, timeDate);
-            TaskManager.changeTask(testTask);
+            boolean shouldClose = false;
+            while(!shouldClose) {
+                System.out.println("Enter command code:");
+                switch (UserActions.getActionFromInt(Input.getInt())){
+                    case GET_USER_TASKS:
+                        Functional.showUserTasks();
+                        break;
+                    case GET_GROUP_USERS:
+                        Functional.showUsersFromAppUserGroup();
+                        break;
+                    case TASK_ACTIONS:
+                        System.out.println("Task actions:\n" +
+                                "1 - Add task\n" +
+                                "2 - Change task\n" +
+                                "3 - Delete task");
+                        break;
+                    case GROUP_ACTIONS:
+                        System.out.println("Group actions:\n" +
+                                "1 - Add user to my group\n" +
+                                "2 - Delete user from my group\n"+
+                                "3 - Leave group");
+                        break;
+                    case CLOSE_PROGRAM:
+                        shouldClose = true;
+                        break;
+                    case UNDEFINED:
+                    default:
+                        System.out.println("No such command");
+                        break;
+                }
+            }
         }
         catch (RuntimeException e){
             UICallback.print(e);

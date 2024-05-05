@@ -4,65 +4,85 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 
 public class Task {
-    private int taskId;
-    private String title;
-    private String description;
+    private int userTaskID;
     private String creatorLogin;
-    private boolean isCompleted;
-    private Timestamp expiryDate;
+    private int creatorGroupID;
+    private String taskName;
+    private String taskDescription;
+    TaskPriority taskPriority;
+    private boolean taskStatus;
+    private Timestamp taskExpiryDate;
 
-    public Task(int taskId, String title, String description, String creatorLogin, boolean isCompleted, Timestamp expiryDate) {
-        this.taskId = taskId;
-        this.title = title;
-        this.description = description;
+    public Task(int userTaskID, String creatorLogin, int creatorGroupID, String taskName,
+                String taskDescription, TaskPriority taskPriority, boolean taskStatus,
+                Timestamp taskExpiryDate) {
+        this.userTaskID = userTaskID;
         this.creatorLogin = creatorLogin;
-        this.isCompleted = isCompleted;
-        this.expiryDate = expiryDate;
+        this.creatorGroupID = creatorGroupID;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskPriority = taskPriority;
+        this.taskStatus = taskStatus;
+        this.taskExpiryDate = taskExpiryDate;
     }
 
-    public Task(String title, String description, String creatorLogin, boolean isCompleted, Timestamp expiryDate) {
-        this.taskId = -1;
-        this.title = title;
-        this.description = description;
+    public Task(String creatorLogin, int creatorGroupID, String taskName,
+                String taskDescription, TaskPriority taskPriority, boolean taskStatus,
+                Timestamp taskExpiryDate) {
+        this.userTaskID = -1;
         this.creatorLogin = creatorLogin;
-        this.isCompleted = isCompleted;
-        this.expiryDate = expiryDate;
+        this.creatorGroupID = creatorGroupID;
+        this.taskName = taskName;
+        this.taskDescription = taskDescription;
+        this.taskPriority = taskPriority;
+        this.taskStatus = taskStatus;
+        this.taskExpiryDate = taskExpiryDate;
     }
 
-    public int getTaskId() {
-        return taskId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
+    public int getUserTaskID() {
+        return userTaskID;
     }
 
     public String getCreatorLogin() {
         return creatorLogin;
     }
 
-    public boolean isCompleted() {
-        return isCompleted;
+    public int getCreatorGroupID() {
+        return creatorGroupID;
     }
 
-    public Timestamp getExpiryDate() {
-        return expiryDate;
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public String getTaskDescription() {
+        return taskDescription;
+    }
+
+    public TaskPriority getTaskPriority() {
+        return taskPriority;
+    }
+
+    public boolean getTaskStatus() {
+        return taskStatus;
+    }
+
+    public Timestamp getTaskExpiryDate() {
+        return taskExpiryDate;
     }
 
     @Override
     public String toString() {
         SimpleDateFormat formater = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return "Task{" +
-                "taskId=" + taskId +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
+                "userTaskID=" + userTaskID +
                 ", creatorLogin='" + creatorLogin + '\'' +
-                ", isCompleted=" + isCompleted +
-                ", expiryDate=" + formater.format(expiryDate) +
+                ", creatorGroupID=" + creatorGroupID +
+                ", taskName='" + taskName + '\'' +
+                ", taskDescription='" + taskDescription + '\'' +
+                ", taskPriority=" + taskPriority +
+                ", taskStatus=" + taskStatus +
+                ", taskExpiryDate=" + formater.format(taskExpiryDate) +
                 '}';
     }
 }

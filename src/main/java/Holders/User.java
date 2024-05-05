@@ -2,12 +2,16 @@ package Holders;
 
 public class User {
 
-    private String userLogin;
-    private String userName;
+    private final String userLogin;
+    private final String userName;
 
     public User(String userName, String userLogin) {
         this.userName = userName;
         this.userLogin = userLogin;
+    }
+
+    public User(String userLogin){
+        this(userLogin, "");
     }
 
     public String getUserLogin() {
